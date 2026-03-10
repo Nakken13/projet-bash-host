@@ -1,0 +1,3 @@
+{"[INFO : CPU]": {"user": "nt", "serveur": "ubuntu-serv", "temps": 1773184128, "cpu": 2.3}}
+{"[INFO : DISQUE]": {"user": "nt", "serveur": "ubuntu-serv", "temps": 1773184128, "disque": 12.1}}
+{"[INFO : RAM]": {"user": "nt", "serveur": "ubuntu-serv", "temps": 1773184128, "ram": 16}}
