@@ -1,0 +1,10 @@
+{
+    "logs": [
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402743, "sondes": {"cpu": 6.2, "disk": 11.9, "ram": 16}}]},
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402753, "sondes": {"cpu": 7.4, "disk": 11.9, "ram": 16}}]},
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402756, "sondes": {"cpu": 7.4, "disk": 11.9, "ram": 15}}]},
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402759, "sondes": {"cpu": 10.0, "disk": 11.9, "ram": 15}}]},
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402765, "sondes": {"cpu": 7.2, "disk": 11.9, "ram": 15}}]},
+        {"user": "user3", "server": "ubuntu-serv3", "data": [{"timestamp": 1773402774, "sondes": {"cpu": 6.3, "disk": 11.9, "ram": 15}}]}
+    ]
+}

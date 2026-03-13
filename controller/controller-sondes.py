@@ -3,10 +3,12 @@
 import subprocess
 import json
 import os
+#"nt": "10.126.3.11","user2":"10.126.1.111",
 
-#guests = {"nt": "10.126.3.11","user2":"10.126.1.111","user3":"10.126.3.226"}
 
-guests = {"user3": "172.20.10.10"}
+#envoyer alerte si un hote répond pas
+
+guests = {"user3":"10.126.3.226"}
 
 def recup_log(guests):
     if not os.path.exists("logs"):
