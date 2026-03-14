@@ -5,7 +5,6 @@ import subprocess
 import os
 import json
 
-#les données trop anciennes doivent être supprimées, la taile de l'historique doit être définie
 HISTORY_SIZE = 1440
 DB_DIR = "./db"
 os.makedirs(DB_DIR, exist_ok=True)
@@ -37,7 +36,6 @@ def get_guests():
     verif_table()
     setup_db_host()
 
-    #guests = {"ubuntu-serv":"10.126.3.226", "ubuntu-serv2":"192.168.1.26", "ubuntu-serv3":"10.126.1.111", "ubuntu-serv4":"10.126.3.11"}
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
     cur.execute("SELECT server, ip FROM serv")
@@ -54,7 +52,7 @@ def recup_infos(ip):
 def delete_old():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
-    # Supprime tout sauf les X derniers enregistrements (basé sur le timestamp)
+
     for table in ["ram", "cpu", "disk"]:
         cur.execute(f"DELETE FROM {table} WHERE temps NOT IN (SELECT temps FROM {table} ORDER BY temps DESC LIMIT {HISTORY_SIZE})")
     con.commit()
@@ -70,7 +68,7 @@ def save_sql(data):
     info_cpu = data["data"][0]["sondes"]["cpu"]
     info_disk = data["data"][0]["sondes"]["disk"]
     number_of_users = data["number_of_users"]
-    alert = data["alert"]
+    alert = 90
 
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()

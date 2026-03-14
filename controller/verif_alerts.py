@@ -13,11 +13,6 @@ if not os.path.exists(DB_NAME):
 url = "https://www.cert.ssi.gouv.fr/alerte/feed/"
 flux = feedparser.parse(url)
 
-for alerte in flux.entries[-1:]:
-    print(f"Titre : {alerte.title}")
-    print(f"Date  : {alerte.published}")
-    print(f"Lien  : {alerte.link}\n")
-
 def verif_table():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
