@@ -13,6 +13,26 @@ DB_NAME = f"{DB_DIR}/monitor.db"
 if not os.path.exists(DB_NAME):
     open(DB_NAME, 'w').close()
 
+
+def verif_table():
+    con = sqlite3.connect(DB_NAME)
+    cur = con.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS ram(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
+    cur.execute("CREATE TABLE IF NOT EXISTS cpu(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
+    cur.execute("CREATE TABLE IF NOT EXISTS disk(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
+    con.commit()
+    con.close()
+
+
+def setup_db_host():
+    con = sqlite3.connect(DB_NAME)
+    cur = con.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS serv(server VARCHAR(20) PRIMARY KEY, ip VARCHAR(15))")
+    con.commit()
+    con.close()
+    return 
+    
+
 def get_guests():
     verif_table()
     setup_db_host()
@@ -28,24 +48,15 @@ def get_guests():
 
 guests = get_guests()
 
-
-def setup_db_host():
-    con = sqlite3.connect(DB_NAME)
-    cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS serv(server VARCHAR(20) PRIMARY KEY, ip VARCHAR(15))")
-    con.commit()
-    con.close()
-    return 
-    
 def recup_infos(ip):
     return subprocess.run(["ssh", f"collect@{ip}", "~/projet-bash-guests/sondes/sonde.sh"],capture_output=True, text=True)
 
-def verif_table():
+def delete_old():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS ram(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
-    cur.execute("CREATE TABLE IF NOT EXISTS cpu(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
-    cur.execute("CREATE TABLE IF NOT EXISTS disk(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, alert_detec double)")
+    # Supprime tout sauf les X derniers enregistrements (basé sur le timestamp)
+    for table in ["ram", "cpu", "disk"]:
+        cur.execute(f"DELETE FROM {table} WHERE temps NOT IN (SELECT temps FROM {table} ORDER BY temps DESC LIMIT {HISTORY_SIZE})")
     con.commit()
     con.close()
 
@@ -73,17 +84,6 @@ def save_all(guests):
     for server,ip in guests.items():
         data = json.loads(recup_infos(ip).stdout)
         save_sql(data)
-
-def delete_old():
-    con = sqlite3.connect(DB_NAME)
-    cur = con.cursor()
-    # Supprime tout sauf les X derniers enregistrements (basé sur le timestamp)
-    for table in ["ram", "cpu", "disk"]:
-        cur.execute(f"DELETE FROM {table} WHERE temps NOT IN (SELECT temps FROM {table} ORDER BY temps DESC LIMIT {HISTORY_SIZE})")
-    con.commit()
-    con.close()
-
-
 
 def setup_serv_insert():
     '''guests = {
