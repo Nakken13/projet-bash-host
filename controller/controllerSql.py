@@ -46,7 +46,7 @@ def get_guests():
     
     return {row[0]: row[1] for row in rows}
 
-guests = get_guests()
+
 
 def recup_infos(ip):
     return subprocess.run(["ssh", f"collect@{ip}", "~/projet-bash-guests/sondes/sonde.sh"],capture_output=True, text=True)
@@ -94,7 +94,7 @@ def setup_serv_insert():
     
     guests = {
         "ubuntu-serv2": "192.168.1.26",
-        "ubuntu-serv3": "192.168.1.26",
+        "ubuntu-serv3": "192.168.1.27",
         "ubuntu-serv4": "192.168.1.26"
     }
 
@@ -151,6 +151,7 @@ def afficher_dernieres_lignes(n=5):
 
 setup_serv_insert()
 
+guests = get_guests()
 save_all(guests)
 
 afficher_dernieres_lignes()
