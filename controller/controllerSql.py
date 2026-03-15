@@ -5,7 +5,7 @@ import subprocess
 import os
 import json
 
-import configController
+from utils import configController
 
 DB_DIR  = "./db"
 DB_NAME = f"{DB_DIR}/monitor.db"
@@ -95,7 +95,6 @@ def setup_serv_insert():
     guests = {
         "ubuntu-serv2": "192.168.1.26",
         "ubuntu-serv3": "192.168.1.27",
-        "ubuntu-serv4": "192.168.1.26"
     }
 
     con = sqlite3.connect(DB_NAME)
@@ -105,7 +104,7 @@ def setup_serv_insert():
         try:
             cur.execute("INSERT INTO server (server, ip) VALUES (?, ?)", (server, ip))
         except sqlite3.IntegrityError:
-            pass # Ignore si déjà présent
+            pass
             
     con.commit()
     con.close()
@@ -149,9 +148,9 @@ def afficher_dernieres_lignes(n=5):
 
     con.close()
 
+guests = get_guests()
 setup_serv_insert()
 
-guests = get_guests()
 save_all(guests)
 
 afficher_dernieres_lignes()

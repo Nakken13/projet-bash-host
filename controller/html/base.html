@@ -156,7 +156,7 @@
 </head>
 <body>
   <nav>
-    <a class="brand" href="{{ url_for('index') }}">⬡ Monitoring</a>
+    <a class="brand" href="{{ url_for('index') }}">Panel Moniteur</a>
     <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Dashboard</a>
     {% for m in metrics %}
     <a href="{{ url_for('compare', metric=m) }}" {% if request.endpoint == 'compare' and request.view_args.metric == m %}class="active"{% endif %}>{{ metric_labels[m] }}</a>

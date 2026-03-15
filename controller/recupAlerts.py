@@ -4,14 +4,13 @@ import feedparser
 import sqlite3
 import os
 
-DB_DIR = "./db"
+DB_DIR = "db"
 os.makedirs(DB_DIR, exist_ok=True)
 DB_NAME = f"{DB_DIR}/alertes.db"
 if not os.path.exists(DB_NAME):
     open(DB_NAME, 'w').close()
 
-url = "https://www.cert.ssi.gouv.fr/alerte/feed/"
-flux = feedparser.parse(url)
+URL = "https://www.cert.ssi.gouv.fr/alerte/feed/"
 
 def verif_table():
     con = sqlite3.connect(DB_NAME)
@@ -25,19 +24,14 @@ def setup_db(flux):
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
     for alerte in flux.entries:
-        cur.execute("INSERT OR IGNORE INTO alert(lien, titre, date) VALUES(?, ?, ?)", 
+        cur.execute("INSERT OR IGNORE INTO alert(lien, titre, date) VALUES(?, ?, ?)",
                     (alerte.link, alerte.title, alerte.published))
     con.commit()
     con.close()
 
-def save_alert(flux):
-    verif_table()
-    con = sqlite3.connect(DB_NAME)
-    cur = con.cursor()
-    alerte = flux.entries[-1]
-    cur.execute("INSERT OR IGNORE INTO alert(lien, titre, date) VALUES(?, ?, ?)", (alerte.link, alerte.title, alerte.published))
-    con.commit()
-    con.close()
+def fetch_and_store():
+    flux = feedparser.parse(URL)
+    setup_db(flux)
 
-setup_db(flux)
-save_alert(flux)
+if __name__ == "__main__":
+    fetch_and_store()

@@ -3,7 +3,7 @@
 import sqlite3
 import os
 
-DB_DIR  = "./db"
+DB_DIR  = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db")
 DB_NAME = f"{DB_DIR}/monitor.db"
 
 CONFIGS = {

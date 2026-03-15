@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import sqlite3
 import time
-import os
 from datetime import datetime
 
 import configController
 
-DB_DIR  = "./db"
+DB_DIR  = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db")
 DB_NAME = f"{DB_DIR}/monitor.db"
 
 METRICS = ["cpu", "ram", "disk"]

@@ -2,13 +2,11 @@
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 
-import configController
-import criseDetect
-import visualization
+from utils import visualization, criseDetect, configController
 
 configController.setup_config()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='html')
 app.secret_key = "monitorbgnahel"
 
 METRICS = ["cpu", "ram", "disk"]

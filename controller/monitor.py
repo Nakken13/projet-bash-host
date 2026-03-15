@@ -1,21 +1,10 @@
 #!/usr/bin/python3
-"""
-Point d'entrée unique pour la détection + notification.
-À appeler depuis le cron toutes les 5 minutes sur l'host.
-
-Envoie un mail UNIQUEMENT si :
-  - une nouvelle crise apparaît (pas encore notifiée)
-  - une crise précédemment notifiée est résolue (mail de retour à la normale)
-"""
-
 import json
 import os
 from datetime import datetime
 
-import criseDetect
-import emailSender
+from utils import emailSender, criseDetect
 
-# Fichier de persistance des crises déjà notifiées
 STATE_FILE = os.path.join(os.path.dirname(__file__), "db", "log_notif_email.json")
 
 
@@ -44,14 +33,12 @@ def run():
     new_crises      = [c for k, c in current_keys.items() if k not in previous_state]
     resolved_keys   = [k for k in previous_state if k not in current_keys]
 
-    # ── Mail pour les nouvelles crises ──────────────────────────────────────
     if new_crises:
         print(f"[monitor] {len(new_crises)} nouvelle(s) crise(s) — envoi du mail.")
         emailSender.send_alert(new_crises)
     else:
         print("[monitor] Aucune nouvelle crise.")
 
-    # ── Mail de résolution ───────────────────────────────────────────────────
     if resolved_keys:
         print(f"[monitor] {len(resolved_keys)} crise(s) résolue(s).")
         resolved = []
@@ -68,7 +55,6 @@ def run():
             })
         emailSender.send_alert(resolved)
 
-    # ── Mise à jour de l'état ────────────────────────────────────────────────
     new_state = {k: {"ts": c["timestamp"]} for k, c in current_keys.items()}
     save_state(new_state)
 

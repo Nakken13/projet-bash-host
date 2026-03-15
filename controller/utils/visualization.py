@@ -1,14 +1,17 @@
 #!/usr/bin/python3
 
-import sqlite3
+import sys
 import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import sqlite3
 from datetime import datetime
 
 import pygal
 from pygal.style import CleanStyle, DarkColorizedStyle
 import configController
 
-DB_DIR     = "./db"
+DB_DIR     = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db")
 DB_MONITOR = f"{DB_DIR}/monitor.db"
 DB_ALERTS  = f"{DB_DIR}/alertes.db"
 OUTPUT_DIR = "./graphs"

@@ -3,7 +3,7 @@
 import sqlite3
 import os
 
-DB_DIR     = "./db"
+DB_DIR     = "../db"
 DB_MONITOR = f"{DB_DIR}/monitor.db"
 DB_ALERTS  = f"{DB_DIR}/alertes.db"
 
