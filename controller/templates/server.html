@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ server }}{% endblock %}
+
+{% block content %}
+<h1>
+  {{ server }}
+  {% if crises %}
+    <span class="badge badge-danger" style="vertical-align:middle;">ALERTE</span>
+  {% else %}
+    <span class="badge badge-ok" style="vertical-align:middle;">OK</span>
+  {% endif %}
+</h1>
+
+{# ── Crises pour ce serveur ── #}
+{% if crises %}
+<div class="card" style="border-color:#e74c3c40;">
+  <h2 style="color:#e74c3c;">⚠ Situations de crise</h2>
+  <table>
+    <thead><tr><th>Type</th><th>Métrique</th><th>Détail</th></tr></thead>
+    <tbody>
+      {% for c in crises %}
+      <tr>
+        <td>
+          {% if c.type == 'threshold' %}
+            <span class="badge badge-danger">Seuil</span>
+          {% else %}
+            <span class="badge badge-warn">Silence</span>
+          {% endif %}
+        </td>
+        <td>{{ c.metric | upper }}</td>
+        <td style="font-size:.85rem; color:var(--muted);">{{ c.message }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{# ── Dernières valeurs ── #}
+<div class="card">
+  <h2>État actuel</h2>
+  {% for metric in metrics %}
+  {% set val = values[metric] %}
+  <div class="metric-row">
+    <span class="metric-label">{{ metric_labels[metric] }}</span>
+    <div class="bar-track">
+      {% if val is not none %}
+        <div class="bar-fill {% if val >= 90 %}bar-crit{% elif val >= 70 %}bar-warn{% else %}bar-ok{% endif %}"
+             style="width: {{ val }}%"></div>
+      {% endif %}
+    </div>
+    <span class="metric-val">{% if val is not none %}{{ val }}%{% else %}—{% endif %}</span>
+  </div>
+  {% endfor %}
+</div>
+
+{# ── Graphique historique ── #}
+<h2>Historique</h2>
+{% if svg %}
+  <div class="chart-wrap">{{ svg | safe }}</div>
+{% else %}
+  <div class="card"><p style="color:var(--muted);">Graphique indisponible (pygal non installé ou aucune donnée).</p></div>
+{% endif %}
+
+<a href="{{ url_for('index') }}" class="btn btn-outline">← Retour au dashboard</a>
+{% endblock %}

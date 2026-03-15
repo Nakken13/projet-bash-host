@@ -1,4 +1,6 @@
 #!/usr/bin/bash
 
-chmod +x ./controller/controllerSql.py
-chmod +x ./controller/verif_alerts.py
+for f in ./controller/*.py; do
+    chmod +x "$f"
+    echo "chmod +x $f"
+done

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Alertes CERT-SSI{% endblock %}
+
+{% block content %}
+<h1>Alertes CERT-SSI</h1>
+
+<div class="card">
+  {% if alerts %}
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Titre</th><th>Lien</th></tr>
+    </thead>
+    <tbody>
+      {% for titre, date, lien in alerts %}
+      <tr>
+        <td style="white-space:nowrap; color:var(--muted); font-size:.85rem;">{{ date[:16] }}</td>
+        <td>{{ titre }}</td>
+        <td><a class="row-link" href="{{ lien }}" target="_blank">Consulter →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">Aucune alerte CERT disponible. Lancez <code>recupAlerts.py</code> pour les récupérer.</p>
+  {% endif %}
+</div>
+{% endblock %}

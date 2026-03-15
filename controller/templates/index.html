@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+{# ── Crises actives ── #}
+{% if crises %}
+<div class="card" style="border-color: #e74c3c40;">
+  <h2 style="color: #e74c3c;">⚠ {{ crises|length }} situation(s) de crise</h2>
+  <table>
+    <thead>
+      <tr><th>Serveur</th><th>Type</th><th>Métrique</th><th>Message</th></tr>
+    </thead>
+    <tbody>
+      {% for c in crises %}
+      <tr>
+        <td><a class="row-link" href="{{ url_for('server_detail', name=c.server) }}">{{ c.server }}</a></td>
+        <td>
+          {% if c.type == 'threshold' %}
+            <span class="badge badge-danger">Seuil</span>
+          {% else %}
+            <span class="badge badge-warn">Silence</span>
+          {% endif %}
+        </td>
+        <td>{{ c.metric | upper }}</td>
+        <td style="font-size:.85rem; color: var(--muted);">{{ c.message }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{# ── Serveurs ── #}
+<h2>Serveurs ({{ servers|length }})</h2>
+{% if servers %}
+<div class="card-grid">
+  {% for s in servers %}
+  {% set crisis = s.crisis %}
+  <div class="card" style="{% if crisis %}border-color: #e74c3c40;{% endif %}">
+    <div class="server-name">
+      <a href="{{ url_for('server_detail', name=s.name) }}">{{ s.name }}</a>
+      {% if crisis %}
+        <span class="badge badge-danger" style="margin-left:.5rem;">ALERTE</span>
+      {% else %}
+        <span class="badge badge-ok" style="margin-left:.5rem;">OK</span>
+      {% endif %}
+    </div>
+
+    {% for metric in metrics %}
+    {% set val = s.values[metric] %}
+    <div class="metric-row">
+      <span class="metric-label">{{ metric_labels[metric] }}</span>
+      <div class="bar-track">
+        {% if val is not none %}
+          <div class="bar-fill {% if val >= 90 %}bar-crit{% elif val >= 70 %}bar-warn{% else %}bar-ok{% endif %}"
+               style="width: {{ val }}%"></div>
+        {% endif %}
+      </div>
+      <span class="metric-val">
+        {% if val is not none %}{{ val }}%{% else %}—{% endif %}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><p style="color:var(--muted);">Aucun serveur dans la base de données.</p></div>
+{% endif %}
+
+{# ── Dernières alertes CERT ── #}
+<h2>Dernières alertes CERT-SSI</h2>
+<div class="card">
+  {% if alerts %}
+  <table>
+    <thead><tr><th>Date</th><th>Titre</th></tr></thead>
+    <tbody>
+      {% for titre, date, lien in alerts %}
+      <tr>
+        <td style="white-space:nowrap; color:var(--muted); font-size:.8rem;">{{ date[:10] }}</td>
+        <td><a class="row-link" href="{{ lien }}" target="_blank">{{ titre }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('alerts') }}" style="display:inline-block; margin-top:.75rem; font-size:.85rem; color:var(--accent);">Voir toutes les alertes →</a>
+  {% else %}
+  <p style="color:var(--muted);">Aucune alerte CERT disponible.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Comparaison {{ label }}{% endblock %}
+
+{% block content %}
+<h1>Comparaison — {{ label }}</h1>
+
+<div class="tab-row">
+  {% for m in metrics %}
+  <a class="tab {% if m == metric %}active{% endif %}" href="{{ url_for('compare', metric=m) }}">
+    {{ metric_labels[m] }}
+  </a>
+  {% endfor %}
+</div>
+
+{% if svg %}
+  <div class="chart-wrap">{{ svg | safe }}</div>
+{% else %}
+  <div class="card"><p style="color:var(--muted);">Aucune donnée disponible pour cette comparaison.</p></div>
+{% endif %}
+
+<a href="{{ url_for('index') }}" class="btn btn-outline">← Dashboard</a>
+{% endblock %}

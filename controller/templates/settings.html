@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Paramètres{% endblock %}
+
+{% block content %}
+<h1>Paramètres</h1>
+
+<form method="POST" action="{{ url_for('settings') }}">
+  <div class="card">
+    <h2>Stockage &amp; Historique</h2>
+    <div class="form-grid">
+      {% for key in ['history_size', 'graph_history'] %}
+      {% set meta = config_meta[key] %}
+      <div class="form-field">
+        <label for="{{ key }}">{{ meta.label }} <span class="unit">{{ meta.unit }}</span></label>
+        <input type="number" id="{{ key }}" name="{{ key }}" value="{{ config.get(key, '') }}" min="1">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Seuils d'alerte</h2>
+    <div class="form-grid">
+      {% for key in ['alert_cpu', 'alert_ram', 'alert_disk'] %}
+      {% set meta = config_meta[key] %}
+      <div class="form-field">
+        <label for="{{ key }}">{{ meta.label }} <span class="unit">{{ meta.unit }}</span></label>
+        <input type="number" id="{{ key }}" name="{{ key }}" value="{{ config.get(key, '') }}" min="0" max="100" step="1">
+      </div>
+      {% endfor %}
+      {% set key = 'server_response_dead' %}
+      {% set meta = config_meta[key] %}
+      <div class="form-field">
+        <label for="{{ key }}">{{ meta.label }} <span class="unit">{{ meta.unit }}</span></label>
+        <input type="number" id="{{ key }}" name="{{ key }}" value="{{ config.get(key, '') }}" min="60">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Notifications e-mail</h2>
+    <div class="form-grid">
+      {% for key in ['mail_to', 'mail_from', 'smtp_host', 'smtp_port'] %}
+      {% set meta = config_meta[key] %}
+      <div class="form-field">
+        <label for="{{ key }}">{{ meta.label }}</label>
+        <input type="{% if 'mail' in key and 'smtp' not in key %}email{% elif key == 'smtp_port' %}number{% else %}text{% endif %}"
+               id="{{ key }}" name="{{ key }}" value="{{ config.get(key, '') }}">
+      </div>
+      {% endfor %}
+    </div>
+    <p style="font-size:.8rem; color:var(--muted); margin-top:.75rem;">
+      Les identifiants SMTP (user/mot de passe) se configurent via les variables d'environnement
+      <code>SMTP_USER</code> et <code>SMTP_PASS</code>.
+    </p>
+  </div>
+
+  <button type="submit" class="btn">Enregistrer</button>
+</form>
+{% endblock %}
