@@ -49,7 +49,7 @@
     </div>
 
     {% for metric in metrics %}
-    {% set val = s.values[metric] %}
+    {% set val = s.vals[metric] %}
     <div class="metric-row">
       <span class="metric-label">{{ metric_labels[metric] }}</span>
       <div class="bar-track">

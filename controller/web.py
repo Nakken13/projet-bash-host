@@ -40,7 +40,7 @@ def index():
         vals = visualization.get_last_values(s)
         servers_data.append({
             "name":   s,
-            "values": vals,
+            "vals": vals,
             "crisis": s in crisis_servers,
         })
 
