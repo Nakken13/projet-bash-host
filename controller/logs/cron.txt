@@ -1,0 +1,6 @@
+ce que je mets dans cron pour recup les logs ici
+
+
+*/5 * * * * collect /home/collect/projet-bash-host/controller/controllerSql.py >>/home/collect/projet-bash-host/controller/logs/save_db.log 2>&1
+*/5 * * * * collect /home/collect/projet-bash-host/controller/monitor.py >> /home/collect/projet-bash-host/controller/logs/detect_alert.log 2>&1
+0 8 * * * collect /home/collect/projet-bash-host/controller/recupAlerts.py >>/home/collect/projet-bash-host/controller/logs/recup_alert.log 2>&1
