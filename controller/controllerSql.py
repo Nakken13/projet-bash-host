@@ -85,17 +85,31 @@ def save_all(serv):
         save_sql(data)
 
 def setup_serv_insert():
-    '''guests = {
+    '''
+    CERI
+    guests = {
         "ubuntu-serv": "10.126.3.226",
         "ubuntu-serv2": "192.168.1.26",
         "ubuntu-serv3": "10.126.1.111",
         "ubuntu-serv4": "10.126.3.11"
     }'''
-    
+
+    '''
+    BU
+    '''
+    guests = {
+        "ubuntu-serv": "10.26.6.239",
+        "ubuntu-serv2": "10.26.1.145",
+        "ubuntu-serv3": "10.26.4.104",
+        "ubuntu-serv4": "10.26.5.190"
+    }
+    '''
+    MAISON
     guests = {
         "ubuntu-serv2": "192.168.1.26",
         "ubuntu-serv3": "192.168.1.27",
     }
+    '''
 
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
@@ -148,8 +162,8 @@ def afficher_dernieres_lignes(n=5):
 
     con.close()
 
-guests = get_guests()
 setup_serv_insert()
+guests = get_guests()
 
 save_all(guests)
 
