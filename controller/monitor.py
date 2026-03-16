@@ -20,14 +20,13 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 
-def crisis_key(c):
-    """Clé unique identifiant une crise (server + metric + type)."""
+def crise_key(c):
     return f"{c['server']}:{c['metric']}:{c['type']}"
 
 
 def run():
     current_crises = criseDetect.detect_crises()
-    current_keys   = {crisis_key(c): c for c in current_crises}
+    current_keys   = {crise_key(c): c for c in current_crises}
     previous_state = load_state()
 
     new_crises      = [c for k, c in current_keys.items() if k not in previous_state]

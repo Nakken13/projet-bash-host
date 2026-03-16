@@ -16,7 +16,7 @@ CONFIGS = {
     "mail_to":        "nahel.taqui@alumni.univ-avignon.fr",
     "mail_from":      "nahel.taqui@alumni.univ-avignon.fr",
     "smtp_host":      "partage.univ-avignon.fr",
-    "smtp_port":      "25",
+    "smtp_port":      "465",
 }
 
 

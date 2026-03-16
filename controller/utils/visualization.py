@@ -22,8 +22,6 @@ LABELS  = {"cpu": "CPU (%)", "ram": "RAM (%)", "disk": "Disque (%)"}
 HISTORY_POINTS = lambda: configController.get("graph_history", cast=int)
 
 
-# ── Requêtes base de données ─────────────────────────────────────────────────
-
 def get_servers():
     if not os.path.exists(DB_MONITOR):
         return []
@@ -74,7 +72,6 @@ def fmt_ts(ts):
     return datetime.fromtimestamp(ts).strftime("%H:%M\n%d/%m")
 
 
-# ── Graphiques Pygal — sauvegarde fichier ────────────────────────────────────
 
 def chart_server(server):
     chart = pygal.Line(
@@ -159,8 +156,6 @@ def chart_cert_alerts():
     return path
 
 
-# ── Rendu SVG en mémoire (pour Flask) ───────────────────────────────────────
-
 def render_server_svg(server):
     chart = pygal.Line(
         title=f"Monitoring — {server}",
@@ -212,7 +207,6 @@ def render_comparison_svg(metric):
     return chart.render(is_unicode=True) if labels_set else None
 
 
-# ── Point d'entrée ───────────────────────────────────────────────────────────
 
 def generate_all():
     servers = get_servers()
