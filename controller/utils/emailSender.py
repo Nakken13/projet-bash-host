@@ -21,7 +21,7 @@ def render_body(crises):
     for c in crises:
         ts = datetime.fromtimestamp(c["timestamp"]).strftime("%Y-%m-%d %H:%M:%S") if c.get("timestamp") else "inconnu"
         lines.append(f"  - {c['message']}  (détecté le {ts})")
-    lines.append("\n-- Système de monitoring L2S4 CERI")
+    lines.append("\n Système de monitoring L2S4 CERI - TAQUI Nahel Groupe 1")
     return "\n".join(lines)
 
 
