@@ -162,6 +162,7 @@ def afficher_dernieres_lignes(n=5):
 
     con.close()
 
+setup_db_host()
 setup_serv_insert()
 guests = get_guests()
 

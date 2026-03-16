@@ -11,7 +11,10 @@ STATE_FILE = os.path.join(os.path.dirname(__file__), "db", "log_notif_email.json
 def load_state():
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
-            return json.load(f)
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return {}
     return {}
 
 
