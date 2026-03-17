@@ -49,11 +49,8 @@ def get_guests():
 
 
 def recup_infos(ip):
-    return subprocess.run(
-        ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
-         f"collect@{ip}", "~/projet-bash-guests/sondes/sonde.sh"],
-        capture_output=True, text=True
-    )
+    print(f"[+] Connexion SSH vers {ip}")
+    return subprocess.run(["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",f"collect@{ip}", "~/projet-bash-guests/sondes/sonde.sh"],capture_output=True, text=True)
 
 def delete_old():
     history_size = configController.get("history_size", cast=int)

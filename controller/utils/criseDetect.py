@@ -28,10 +28,11 @@ def detect_crises():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
 
+    max_silence = configController.get("server_response_dead", cast=int)
+
+    # Alertes seuil — une par métrique
     for metric in METRICS:
         seuil = configController.get(f"alert_{metric}", cast=float)
-        max_silence = configController.get("server_response_dead", cast=int)
-
         cur.execute(f"""
             SELECT server, val, temps
             FROM {metric}
@@ -54,28 +55,29 @@ def detect_crises():
                     ),
                 })
 
-        cur.execute(f"""
-            SELECT s.server, MAX(m.temps) AS last_seen
-            FROM server s
-            LEFT JOIN {metric} m ON s.server = m.server
-            GROUP BY s.server
-        """)
-        for server, last_seen in cur.fetchall():
-            silence_sec = now - last_seen if last_seen else max_silence + 1
-            if silence_sec > max_silence:
-                silence_min = silence_sec // 60
-                crises.append({
-                    "type":      "silence",
-                    "metric":    metric,
-                    "server":    server,
-                    "value":     None,
-                    "seuil_alert": None,
-                    "timestamp": last_seen,
-                    "message": (
-                        f"[ALERTE SILENCE] {server} — aucune donnée "
-                        f"{metric.upper()} depuis {silence_min} min"
-                    ),
-                })
+    # Alerte silence — une seule par serveur (basée sur cpu)
+    cur.execute("""
+        SELECT s.server, MAX(m.temps) AS last_seen
+        FROM server s
+        LEFT JOIN cpu m ON s.server = m.server
+        GROUP BY s.server
+    """)
+    for server, last_seen in cur.fetchall():
+        silence_sec = now - last_seen if last_seen else max_silence + 1
+        if silence_sec > max_silence:
+            silence_min = silence_sec // 60
+            crises.append({
+                "type":      "silence",
+                "metric":    "réseau",
+                "server":    server,
+                "value":     None,
+                "seuil_alert": None,
+                "timestamp": last_seen,
+                "message": (
+                    f"[ALERTE SILENCE] {server} — aucune donnée "
+                    f"depuis {silence_min} min"
+                ),
+            })
 
     con.close()
     return crises
@@ -89,7 +91,7 @@ def print_crises(crises_actuelles):
         print(f"  /!\\ {len(crises_actuelles)} SITUATION(S) DE CRISE DÉTECTÉE(S)")
         print(f"{'─'*62}")
         for c in crises_actuelles:
-            ts = datetime.fromtimestamp(c["timestamp"]).strftime("%Y-%m-%d %H:%M:%S")
+            ts = datetime.fromtimestamp(c["timestamp"]).strftime("%Y-%m-%d %H:%M:%S") if c["timestamp"] else "inconnue"
             print(f"  {c['message']}")
             print(f"      Dernière donnée : {ts}")
     print(f"{'='*62}\n")
