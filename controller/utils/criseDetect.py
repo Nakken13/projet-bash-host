@@ -55,14 +55,18 @@ def detect_crises():
                     ),
                 })
 
-    # Alerte silence — une seule par serveur (basée sur cpu)
-    cur.execute("""
-        SELECT s.server, MAX(m.temps) AS last_seen
-        FROM server s
-        LEFT JOIN cpu m ON s.server = m.server
-        GROUP BY s.server
-    """)
-    for server, last_seen in cur.fetchall():
+    # Alerte silence — une seule par serveur
+    # Construit la map server → last_seen depuis la table cpu
+    cur.execute("SELECT server, MAX(temps) FROM cpu GROUP BY server")
+    last_seen_map = {row[0]: row[1] for row in cur.fetchall()}
+
+    # Ajoute les serveurs enregistrés mais sans aucune donnée
+    cur.execute("SELECT server FROM server")
+    for (srv,) in cur.fetchall():
+        if srv not in last_seen_map:
+            last_seen_map[srv] = None
+
+    for server, last_seen in last_seen_map.items():
         silence_sec = now - last_seen if last_seen else max_silence + 1
         if silence_sec > max_silence:
             silence_min = silence_sec // 60

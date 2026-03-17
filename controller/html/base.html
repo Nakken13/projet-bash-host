@@ -179,6 +179,7 @@
   <script>
     (function () {
       let lastTs = null;
+      let lastNCrises = null;
 
       function check() {
         fetch('/api/last-update')
@@ -186,7 +187,8 @@
           .then(data => {
             if (lastTs === null) {
               lastTs = data.ts;
-            } else if (data.ts !== lastTs) {
+              lastNCrises = data.n_crises;
+            } else if (data.ts !== lastTs || data.n_crises !== lastNCrises) {
               location.reload();
             }
           })

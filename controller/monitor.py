@@ -44,11 +44,17 @@ def run():
     new_crises    = [c for k, c in current_keys.items() if k not in previous_state]
     resolved_keys = [k for k in previous_state if k not in current_keys]
 
+    # Crises dont la notification a échoué → on les retire de l'état pour retry
+    failed_keys = set()
+
     if new_crises:
         log(f"[monitor] {len(new_crises)} nouvelle(s) crise(s) détectée(s) :")
         for c in new_crises:
             log(f"  {c['message']}")
-        emailSender.send_alert(new_crises, log)
+        ok = emailSender.send_alert(new_crises, log)
+        if not ok:
+            failed_keys = {crise_key(c) for c in new_crises}
+            log("[monitor] Échec mail — ces crises seront renvoyées au prochain passage.")
     else:
         log("[monitor] Aucune nouvelle crise.")
 
@@ -73,7 +79,12 @@ def run():
             })
         emailSender.send_alert(resolved, log)
 
-    new_state = {k: {"ts": c["timestamp"]} for k, c in current_keys.items()}
+    # Sauvegarder l'état — exclure les crises dont le mail n'a pas pu être envoyé
+    new_state = {
+        k: {"ts": c["timestamp"]}
+        for k, c in current_keys.items()
+        if k not in failed_keys
+    }
     save_state(new_state)
 
 

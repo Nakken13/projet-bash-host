@@ -50,12 +50,14 @@ def send_alert(crises, log=print):
                 server.login(SMTP_USER, SMTP_PASS)
             server.sendmail(from_addr, [to_addr], msg.as_string())
         log(f"[emailSender] E-mail envoyé à {to_addr} ({len(crises)} alerte(s)).")
+        return True
     except ConnectionRefusedError:
         log(f"[emailSender] Connexion refusée par {smtp_host}:{smtp_port}.")
     except smtplib.SMTPException as e:
         log(f"[emailSender] Erreur SMTP : {e}")
     except OSError as e:
         log(f"[emailSender] Erreur réseau : {e}")
+    return False
 
 
 if __name__ == "__main__":

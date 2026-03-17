@@ -143,7 +143,11 @@ def last_update():
         con.close()
     except Exception:
         ts = None
-    return app.response_class(json.dumps({"ts": ts}), mimetype="application/json")
+    n_crises = len(criseDetect.detect_crises())
+    return app.response_class(
+        json.dumps({"ts": ts, "n_crises": n_crises}),
+        mimetype="application/json"
+    )
 
 
 if __name__ == "__main__":
