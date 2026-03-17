@@ -18,9 +18,9 @@ configController.setup_config()
 def verif_table():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS ram(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double)")
-    cur.execute("CREATE TABLE IF NOT EXISTS cpu(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double)")
-    cur.execute("CREATE TABLE IF NOT EXISTS disk(temps integer primary key, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double)")
+    cur.execute("CREATE TABLE IF NOT EXISTS ram(temps integer, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, PRIMARY KEY (temps, server))")
+    cur.execute("CREATE TABLE IF NOT EXISTS cpu(temps integer, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, PRIMARY KEY (temps, server))")
+    cur.execute("CREATE TABLE IF NOT EXISTS disk(temps integer, number_of_users int, user VARCHAR(20), server VARCHAR(20), val double, PRIMARY KEY (temps, server))")
     con.commit()
     con.close()
 
