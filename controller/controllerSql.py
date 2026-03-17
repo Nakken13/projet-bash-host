@@ -7,7 +7,7 @@ import json
 
 from utils import configController
 
-DB_DIR  = "./db"
+DB_DIR  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db")
 DB_NAME = f"{DB_DIR}/monitor.db"
 os.makedirs(DB_DIR, exist_ok=True)
 if not os.path.exists(DB_NAME):

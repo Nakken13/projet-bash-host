@@ -4,7 +4,7 @@ import feedparser
 import sqlite3
 import os
 
-DB_DIR = "db"
+DB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db")
 os.makedirs(DB_DIR, exist_ok=True)
 DB_NAME = f"{DB_DIR}/alertes.db"
 if not os.path.exists(DB_NAME):
