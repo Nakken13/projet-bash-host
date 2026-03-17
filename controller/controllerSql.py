@@ -84,8 +84,16 @@ def save_sql(data):
     con.close()
 
 def save_all(serv):
-    for server,ip in serv.items():
-        data = json.loads(recup_infos(ip).stdout)
+    for server, ip in serv.items():
+        result = recup_infos(ip)
+        if not result.stdout.strip():
+            print(f"[controller] ERREUR SSH : pas de réponse de {server} ({ip})")
+            continue
+        try:
+            data = json.loads(result.stdout)
+        except json.JSONDecodeError as e:
+            print(f"[controller] ERREUR JSON {server} : {e}")
+            continue
         save_sql(data)
 
 def setup_serv_insert():

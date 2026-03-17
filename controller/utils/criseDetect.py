@@ -55,14 +55,13 @@ def detect_crises():
                 })
 
         cur.execute(f"""
-            SELECT server, MAX(temps) AS last_seen
-            FROM {metric}
-            GROUP BY server
+            SELECT s.server, MAX(m.temps) AS last_seen
+            FROM server s
+            LEFT JOIN {metric} m ON s.server = m.server
+            GROUP BY s.server
         """)
         for server, last_seen in cur.fetchall():
-            if last_seen is None:
-                continue
-            silence_sec = now - last_seen
+            silence_sec = now - last_seen if last_seen else max_silence + 1
             if silence_sec > max_silence:
                 silence_min = silence_sec // 60
                 crises.append({
