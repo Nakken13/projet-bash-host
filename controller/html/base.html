@@ -175,5 +175,27 @@
 
     {% block content %}{% endblock %}
   </main>
+
+  <script>
+    (function () {
+      let lastTs = null;
+
+      function check() {
+        fetch('/api/last-update')
+          .then(r => r.json())
+          .then(data => {
+            if (lastTs === null) {
+              lastTs = data.ts;
+            } else if (data.ts !== lastTs) {
+              location.reload();
+            }
+          })
+          .catch(() => {});
+      }
+
+      check();
+      setInterval(check, 10000);
+    })();
+  </script>
 </body>
 </html>

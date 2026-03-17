@@ -7,7 +7,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+TZ = timezone(timedelta(hours=1))  # UTC+1 (Europe/Paris)
 
 import configController
 
@@ -16,10 +18,10 @@ SMTP_PASS = os.environ.get("SMTP_PASS", "")
 
 
 def render_body(crises):
-    date_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date_str = datetime.now(tz=TZ).strftime("%Y-%m-%d %H:%M:%S")
     lines = [f"Rapport de monitoring — {date_str}\n\n{len(crises)} situation(s) de crise :\n"]
     for c in crises:
-        ts = datetime.fromtimestamp(c["timestamp"]).strftime("%Y-%m-%d %H:%M:%S") if c.get("timestamp") else "inconnu"
+        ts = datetime.fromtimestamp(c["timestamp"], tz=TZ).strftime("%Y-%m-%d %H:%M:%S") if c.get("timestamp") else "inconnu"
         lines.append(f"  - {c['message']}  (détecté le {ts})")
     lines.append("\n Système de monitoring L2S4 CERI - TAQUI Nahel Groupe 1")
     return "\n".join(lines)

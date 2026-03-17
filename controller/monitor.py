@@ -57,7 +57,11 @@ def run():
         resolved = []
         for k in resolved_keys:
             server, metric, crisis_type = k.split(":", 2)
-            log(f"  Résolu : {server} — {metric.upper()}")
+            if crisis_type == "silence":
+                msg = f"[RÉSOLU] {server} — serveur de nouveau joignable"
+            else:
+                msg = f"[RÉSOLU] {server} — {metric.upper()} est revenu à la normale"
+            log(f"  Résolu : {server} — {msg}")
             resolved.append({
                 "type":      "resolved",
                 "metric":    metric,
@@ -65,7 +69,7 @@ def run():
                 "value":     None,
                 "threshold": None,
                 "timestamp": int(datetime.now().timestamp()),
-                "message":   f"[RÉSOLU] {server} — {metric.upper()} est revenu à la normale",
+                "message":   msg,
             })
         emailSender.send_alert(resolved, log)
 

@@ -42,7 +42,12 @@ def get_servers():
         return []
     con = sqlite3.connect(DB_MONITOR)
     cur = con.cursor()
-    cur.execute("SELECT DISTINCT server FROM cpu ORDER BY server")
+    cur.execute("""
+        SELECT server FROM server
+        UNION
+        SELECT DISTINCT server FROM cpu
+        ORDER BY server
+    """)
     servers = [row[0] for row in cur.fetchall()]
     con.close()
     return servers

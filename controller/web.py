@@ -123,5 +123,28 @@ def settings():
     )
 
 
+@app.route("/api/last-update")
+def last_update():
+    import sqlite3, json
+    db_path = visualization.DB_MONITOR
+    try:
+        con = sqlite3.connect(db_path)
+        cur = con.cursor()
+        cur.execute("""
+            SELECT MAX(temps) FROM (
+                SELECT MAX(temps) AS temps FROM cpu
+                UNION ALL
+                SELECT MAX(temps) FROM ram
+                UNION ALL
+                SELECT MAX(temps) FROM disk
+            )
+        """)
+        ts = cur.fetchone()[0]
+        con.close()
+    except Exception:
+        ts = None
+    return app.response_class(json.dumps({"ts": ts}), mimetype="application/json")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=False)
