@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 TZ = timezone(timedelta(hours=1))  # UTC+1 (Europe/Paris)
 
 import pygal
-from pygal.style import CleanStyle, DarkColorizedStyle
+from pygal.style import CleanStyle, DarkColorizedStyle, Style
 import configController
 
 DB_DIR     = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db")
@@ -20,6 +20,19 @@ OUTPUT_DIR = "./graphs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 METRICS = ["cpu", "ram", "disk"]
+
+ServerStyle = Style(
+    colors=("#e74c3c", "#3498db", "#2ecc71"),
+    background="#1a1d27",
+    plot_background="#1a1d27",
+    foreground="#e0e0e0",
+    foreground_strong="#ffffff",
+    foreground_subtle="#7a7f99",
+    label_font_size=12,
+    major_label_font_size=12,
+    title_font_size=16,
+    legend_font_size=14,
+)
 LABELS  = {"cpu": "CPU (%)", "ram": "RAM (%)", "disk": "Disque (%)"}
 HISTORY_POINTS = lambda: configController.get("graph_history", cast=int)
 
@@ -82,7 +95,7 @@ def chart_server(server):
         legend_at_bottom=True,
         show_dots=False,
         stroke_style={"width": 2},
-        style=CleanStyle,
+        style=ServerStyle,
         y_title="Utilisation (%)",
         range=(0, 100),
     )
@@ -165,7 +178,7 @@ def render_server_svg(server):
         legend_at_bottom=True,
         show_dots=False,
         stroke_style={"width": 2},
-        style=CleanStyle,
+        style=ServerStyle,
         y_title="Utilisation (%)",
         range=(0, 100),
         width=800,

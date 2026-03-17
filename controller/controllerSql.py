@@ -77,9 +77,9 @@ def save_sql(data):
     number_of_users = data["number_of_users"]
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
-    cur.execute("INSERT INTO ram (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_ram))
-    cur.execute("INSERT INTO cpu (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_cpu))
-    cur.execute("INSERT INTO disk (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_disk))
+    cur.execute("INSERT OR IGNORE INTO ram (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_ram))
+    cur.execute("INSERT OR IGNORE INTO cpu (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_cpu))
+    cur.execute("INSERT OR IGNORE INTO disk (temps, number_of_users, user, server, val) VALUES (?, ?, ?, ?, ?)", (time, number_of_users, user, server, info_disk))
     con.commit()
     con.close()
 
