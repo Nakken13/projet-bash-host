@@ -25,9 +25,9 @@ def render_body(crises):
     return "\n".join(lines)
 
 
-def send_alert(crises):
+def send_alert(crises, log=print):
     if not crises:
-        print("[emailSender] Aucune crise détectée — pas d'e-mail envoyé.")
+        log("[emailSender] Aucune crise — pas d'e-mail envoyé.")
         return
 
     smtp_host = configController.get("smtp_host")
@@ -41,18 +41,19 @@ def send_alert(crises):
     msg["To"]      = to_addr
     msg.attach(MIMEText(render_body(crises), "plain", "utf-8"))
 
+    log(f"[emailSender] Tentative envoi → {to_addr} via {smtp_host}:{smtp_port}")
     try:
         with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10) as server:
             if SMTP_USER and SMTP_PASS:
                 server.login(SMTP_USER, SMTP_PASS)
             server.sendmail(from_addr, [to_addr], msg.as_string())
-        print(f"[emailSender] E-mail envoyé à {to_addr} ({len(crises)} alerte(s)).")
+        log(f"[emailSender] E-mail envoyé à {to_addr} ({len(crises)} alerte(s)).")
     except ConnectionRefusedError:
-        print(f"[emailSender] Connexion refusée par {smtp_host}:{smtp_port}.")
+        log(f"[emailSender] Connexion refusée par {smtp_host}:{smtp_port}.")
     except smtplib.SMTPException as e:
-        print(f"[emailSender] Erreur SMTP : {e}")
+        log(f"[emailSender] Erreur SMTP : {e}")
     except OSError as e:
-        print(f"[emailSender] Erreur réseau : {e}")
+        log(f"[emailSender] Erreur réseau : {e}")
 
 
 if __name__ == "__main__":

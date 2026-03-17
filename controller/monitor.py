@@ -5,7 +5,16 @@ from datetime import datetime
 
 from utils import emailSender, criseDetect
 
-STATE_FILE = os.path.join(os.path.dirname(__file__), "db", "log_notif_email.json")
+BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
+STATE_FILE = os.path.join(BASE_DIR, "db", "log_notif_email.json")
+LOG_FILE   = os.path.join(BASE_DIR, "logs", "monitor.log")
+
+
+def log(msg):
+    line = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
+    print(line)
+    with open(LOG_FILE, "a") as f:
+        f.write(line + "\n")
 
 
 def load_state():
@@ -32,20 +41,23 @@ def run():
     current_keys   = {crise_key(c): c for c in current_crises}
     previous_state = load_state()
 
-    new_crises      = [c for k, c in current_keys.items() if k not in previous_state]
-    resolved_keys   = [k for k in previous_state if k not in current_keys]
+    new_crises    = [c for k, c in current_keys.items() if k not in previous_state]
+    resolved_keys = [k for k in previous_state if k not in current_keys]
 
     if new_crises:
-        print(f"[monitor] {len(new_crises)} nouvelle(s) crise(s) — envoi du mail.")
-        emailSender.send_alert(new_crises)
+        log(f"[monitor] {len(new_crises)} nouvelle(s) crise(s) détectée(s) :")
+        for c in new_crises:
+            log(f"  {c['message']}")
+        emailSender.send_alert(new_crises, log)
     else:
-        print("[monitor] Aucune nouvelle crise.")
+        log("[monitor] Aucune nouvelle crise.")
 
     if resolved_keys:
-        print(f"[monitor] {len(resolved_keys)} crise(s) résolue(s).")
+        log(f"[monitor] {len(resolved_keys)} crise(s) résolue(s).")
         resolved = []
         for k in resolved_keys:
             server, metric, crisis_type = k.split(":", 2)
+            log(f"  Résolu : {server} — {metric.upper()}")
             resolved.append({
                 "type":      "resolved",
                 "metric":    metric,
@@ -55,7 +67,7 @@ def run():
                 "timestamp": int(datetime.now().timestamp()),
                 "message":   f"[RÉSOLU] {server} — {metric.upper()} est revenu à la normale",
             })
-        emailSender.send_alert(resolved)
+        emailSender.send_alert(resolved, log)
 
     new_state = {k: {"ts": c["timestamp"]} for k, c in current_keys.items()}
     save_state(new_state)
