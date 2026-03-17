@@ -85,31 +85,13 @@ def save_all(serv):
         save_sql(data)
 
 def setup_serv_insert():
-    '''
-    CERI
-    guests = {
-        "ubuntu-serv": "10.126.3.226",
-        "ubuntu-serv2": "192.168.1.26",
-        "ubuntu-serv3": "10.126.1.111",
-        "ubuntu-serv4": "10.126.3.11"
-    }'''
 
-    '''
-    BU
-    '''
     guests = {
-        "ubuntu-serv": "10.26.6.239",
-        "ubuntu-serv2": "10.26.1.145",
-        "ubuntu-serv3": "10.26.4.104",
-        "ubuntu-serv4": "10.26.5.190"
+        "ubuntu-serv": "192.168.56.10",
+        "ubuntu-serv2": "192.168.56.11",
+        "ubuntu-serv3": "192.168.56.12",
+        "ubuntu-serv4": "192.168.56.13"
     }
-    '''
-    MAISON
-    guests = {
-        "ubuntu-serv2": "192.168.1.26",
-        "ubuntu-serv3": "192.168.1.27",
-    }
-    '''
 
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
