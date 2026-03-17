@@ -5,7 +5,9 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+TZ = timezone(timedelta(hours=1))  # UTC+1 (Europe/Paris)
 
 import pygal
 from pygal.style import CleanStyle, DarkColorizedStyle
@@ -69,7 +71,7 @@ def get_last_values(server):
 
 
 def fmt_ts(ts):
-    return datetime.fromtimestamp(ts).strftime("%H:%M\n%d/%m")
+    return datetime.fromtimestamp(ts, tz=TZ).strftime("%H:%M\n%d/%m")
 
 
 

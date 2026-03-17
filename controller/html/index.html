@@ -17,10 +17,12 @@
       <tr>
         <td><a class="row-link" href="{{ url_for('server_detail', name=c.server) }}">{{ c.server }}</a></td>
         <td>
-          {% if c.type == 'threshold' %}
+          {% if c.type == 'seuil_alert' %}
             <span class="badge badge-danger">Seuil</span>
-          {% else %}
+          {% elif c.type == 'silence' %}
             <span class="badge badge-warn">Silence</span>
+          {% else %}
+            <span class="badge badge-ok">{{ c.type }}</span>
           {% endif %}
         </td>
         <td>{{ c.metric | upper }}</td>
