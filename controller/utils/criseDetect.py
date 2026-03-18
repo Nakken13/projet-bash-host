@@ -30,7 +30,7 @@ def detect_crises():
 
     max_silence = configController.get("server_response_dead", cast=int)
 
-    # Alertes seuil — une par métrique
+    # Alertes seuil — une par métrique (données récentes uniquement)
     for metric in METRICS:
         seuil = configController.get(f"alert_{metric}", cast=float)
         cur.execute(f"""
@@ -39,7 +39,8 @@ def detect_crises():
             WHERE temps IN (
                 SELECT MAX(temps) FROM {metric} GROUP BY server
             )
-        """)
+            AND temps > ?
+        """, (now - max_silence,))
         for server, val, temps in cur.fetchall():
             if val >= seuil:
                 crises.append({
@@ -76,7 +77,8 @@ def detect_crises():
                 "server":    server,
                 "value":     None,
                 "seuil_alert": None,
-                "timestamp": last_seen,
+                "timestamp": now,
+                "last_seen": last_seen,
                 "message": (
                     f"[ALERTE SILENCE] {server} — aucune donnée "
                     f"depuis {silence_min} min"

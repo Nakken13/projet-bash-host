@@ -57,8 +57,17 @@ def delete_old():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
     for table in ["ram", "cpu", "disk"]:
-        cur.execute(f"DELETE FROM {table} WHERE temps NOT IN "
-                    f"(SELECT temps FROM {table} ORDER BY temps DESC LIMIT {history_size})")
+        # Supprime les anciennes entrées SAUF le dernier enregistrement de chaque serveur
+        # (nécessaire pour que la détection de silence fonctionne même après une longue absence)
+        cur.execute(f"""
+            DELETE FROM {table}
+            WHERE temps NOT IN (
+                SELECT temps FROM {table} ORDER BY temps DESC LIMIT {history_size}
+            )
+            AND (server, temps) NOT IN (
+                SELECT server, MAX(temps) FROM {table} GROUP BY server
+            )
+        """)
     con.commit()
     con.close()
 
