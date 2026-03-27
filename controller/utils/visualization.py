@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 TZ = timezone(timedelta(hours=1))  # UTC+1 (Europe/Paris)
 
 import pygal
-from pygal.style import CleanStyle, DarkColorizedStyle, Style
+from pygal.style import DarkColorizedStyle, Style
 import configController
 
 DB_DIR     = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db")
@@ -89,13 +89,13 @@ def get_last_values(server):
 
 
 def fmt_ts(ts):
-    return datetime.fromtimestamp(ts, tz=TZ).strftime("%H:%M\n%d/%m")
+    return datetime.fromtimestamp(ts, tz=TZ).strftime("%H:%M\n%d/%m")# on récup les timestamp pour l'affichage
 
 
 
-def chart_server(server):
+def chart_server(server):# génération de graphique pour un server
     chart = pygal.Line(
-        title=f"Monitoring — {server}",
+        title=f"Monitoring - {server}",
         x_label_rotation=45,
         legend_at_bottom=True,
         show_dots=False,
@@ -128,7 +128,7 @@ def chart_comparison(metric):
     if not servers:
         return None
     chart = pygal.Line(
-        title=f"Comparaison {LABELS[metric]} — tous serveurs",
+        title=f"Comparaison {LABELS[metric]} - tous serveurs",
         x_label_rotation=45,
         legend_at_bottom=True,
         show_dots=False,
@@ -178,7 +178,7 @@ def chart_cert_alerts():
 
 def render_server_svg(server):
     chart = pygal.Line(
-        title=f"Monitoring — {server}",
+        title=f"Monitoring - {server}",
         x_label_rotation=45,
         legend_at_bottom=True,
         show_dots=False,
@@ -204,7 +204,7 @@ def render_server_svg(server):
 def render_comparison_svg(metric):
     servers = get_servers()
     chart = pygal.Line(
-        title=f"Comparaison {LABELS.get(metric, metric)} — tous serveurs",
+        title=f"Comparaison {LABELS.get(metric, metric)} - tous serveurs",
         x_label_rotation=45,
         legend_at_bottom=True,
         show_dots=False,
@@ -235,7 +235,7 @@ def generate_all():
         return
 
     print(f"[viz] Génération des graphiques SVG dans ./{OUTPUT_DIR}/")
-    print(f"[viz] {len(servers)} serveur(s) — {HISTORY_POINTS()} points d'historique\n")
+    print(f"[viz] {len(servers)} serveur(s) - {HISTORY_POINTS()} points d'historique\n")
 
     for server in servers:
         chart_server(server)

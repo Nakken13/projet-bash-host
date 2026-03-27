@@ -57,8 +57,7 @@ def delete_old():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
     for table in ["ram", "cpu", "disk"]:
-        # Supprime les anciennes entrées SAUF le dernier enregistrement de chaque serveur
-        # (nécessaire pour que la détection de silence fonctionne même après une longue absence)
+
         cur.execute(f"""
             DELETE FROM {table}
             WHERE temps NOT IN (
@@ -152,7 +151,6 @@ def afficher_dernieres_lignes(n=5):
             print("  (aucune donnée)")
             continue
 
-        # En-têtes
         colonnes = [desc[0] for desc in cur.description]
         print("  " + " | ".join(f"{col:<15}" for col in colonnes))
         print("  " + "-" * (17 * len(colonnes)))

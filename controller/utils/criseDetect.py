@@ -3,6 +3,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+#ajoute le dossier où se trouve le script aux chemins de recherche de Python. pour pouvoir importer config meme depuis un import de ce fichier
 
 import sqlite3
 import time
@@ -52,12 +53,11 @@ def detect_crises():
                     "timestamp": temps,
                     "message": (
                         f"[ALERTE SEUIL] {server} — {metric.upper()} "
-                        f"à {val:.1f}% (seuil : {seuil:.0f}%)"
+                        f"à {val:.1f}% (seuil : {seuil:.0f}%)"# arrondi aux dixieme pour val et aucun pour le seuil
                     ),
                 })
 
-    # Alerte silence — une seule par serveur
-    # Construit la map server → last_seen depuis la table cpu
+    #cas du server silence
     cur.execute("SELECT server, MAX(temps) FROM cpu GROUP BY server")
     last_seen_map = {row[0]: row[1] for row in cur.fetchall()}
 
@@ -103,6 +103,6 @@ def print_crises(crises_actuelles):
     print(f"{'='*62}\n")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":#sera run uniquement si pas importé
     crises = detect_crises()
     print_crises(crises)

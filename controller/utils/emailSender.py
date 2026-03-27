@@ -3,6 +3,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+#idem que pour criseDetect c pour qu'il n'y ait pas de conflit lors de l'import de l'import
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -19,7 +20,7 @@ SMTP_PASS = os.environ.get("SMTP_PASS", "")
 
 def render_body(crises):
     date_str = datetime.now(tz=TZ).strftime("%Y-%m-%d %H:%M:%S")
-    lines = [f"Rapport de monitoring — {date_str}\n\n{len(crises)} situation(s) de crise :\n"]
+    lines = [f"Rapport de monitoring - {date_str}\n\n{len(crises)} situation(s) de crise :\n"]
     for c in crises:
         ts = datetime.fromtimestamp(c["timestamp"], tz=TZ).strftime("%Y-%m-%d %H:%M:%S") if c.get("timestamp") else "inconnu"
         lines.append(f"  - {c['message']}  (détecté le {ts})")
