@@ -58,14 +58,15 @@ def delete_old():
     con = sqlite3.connect(DB_NAME)
     cur = con.cursor()
     for table in ["ram", "cpu", "disk"]:
-
         cur.execute(f"""
             DELETE FROM {table}
-            WHERE temps NOT IN (
-                SELECT temps FROM {table} ORDER BY temps DESC LIMIT {history_size}
-            )
-            AND (server, temps) NOT IN (
-                SELECT server, MAX(temps) FROM {table} GROUP BY server
+            WHERE rowid NOT IN (
+                SELECT rowid FROM (
+                    SELECT rowid,
+                           ROW_NUMBER() OVER (PARTITION BY server ORDER BY temps DESC) AS rn
+                    FROM {table}
+                )
+                WHERE rn <= {history_size}
             )
         """)
     con.commit()
