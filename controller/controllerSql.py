@@ -60,13 +60,11 @@ def delete_old():
     for table in ["ram", "cpu", "disk"]:
         cur.execute(f"""
             DELETE FROM {table}
-            WHERE rowid NOT IN (
-                SELECT rowid FROM (
-                    SELECT rowid,
-                           ROW_NUMBER() OVER (PARTITION BY server ORDER BY temps DESC) AS rn
-                    FROM {table}
-                )
-                WHERE rn <= {history_size}
+            WHERE temps NOT IN (
+                SELECT temps FROM {table} ORDER BY temps DESC LIMIT {history_size}
+            )
+            AND (server, temps) NOT IN (
+                SELECT server, MAX(temps) FROM {table} GROUP BY server
             )
         """)
     con.commit()
