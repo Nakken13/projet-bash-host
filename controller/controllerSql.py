@@ -12,6 +12,7 @@ DB_NAME = f"{DB_DIR}/monitor.db"
 os.makedirs(DB_DIR, exist_ok=True)
 if not os.path.exists(DB_NAME):
     open(DB_NAME, 'w').close()
+
 configController.setup_config()
 
 
